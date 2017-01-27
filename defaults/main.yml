@@ -1,4 +1,5 @@
-mailinabox_ref: 'master'
+mailinabox_ref: 'ubuntu16.04'
+mailinabox_repo: 'https://github.com/pludoni/mailinabox.git'
 
 postfix_queue_lifetime_vars:
   - key: maximal_queue_lifetime
@@ -14,7 +15,7 @@ postfix_queue_lifetime_vars:
 
 
 # Define further local domains if necessary
-postfix_local_domain: "ebndmail.de"
+postfix_local_domain: "{{ansible_domain}}"
 
 # Disable Graylisting -
 postfix_disable_graylisting: yes

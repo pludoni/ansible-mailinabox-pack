@@ -1,5 +1,5 @@
 - git:
-    repo: "https://github.com/mail-in-a-box/mailinabox.git"
+    repo: "{{mailinabox_repo}}"
     dest: "/root/mailinabox"
     version: "{{mailinabox_ref}}"
     update: no
