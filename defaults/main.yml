@@ -1,0 +1,51 @@
+mailinabox_ref: 'master'
+
+postfix_queue_lifetime_vars:
+  - key: maximal_queue_lifetime
+    value: 30m
+  - key: maximal_backoff_time
+    value: 15m
+  - key: minimal_backoff_time
+    value: 15m
+  - key: queue_run_delay
+    value: 15m
+  - key: delay_warning_time
+    value: 30m
+
+
+# Define further local domains if necessary
+postfix_local_domain: "ebndmail.de"
+
+# Disable Graylisting -
+postfix_disable_graylisting: yes
+
+# Disable who-is-allowed-check
+postfix_allow_all_users_to_send_as_any: yes
+
+# Also enable delivery to localdomain for bouncer +noreply aliases
+postfix_other_vars:
+  - key: mydestination
+    value: "localhost, localhost.localdomain, localdomain, {{postfix_local_domain}}"
+    enabled: yes
+  - key: smtpd_sender_restrictions
+    value: reject_non_fqdn_sender,reject_unknown_sender_domain,reject_rhsbl_sender dbl.spamhaus.org
+    enabled: "{{postfix_allow_all_users_to_send_as_any}}"
+  - key: smtpd_recipient_restrictions
+    value: permit_sasl_authenticated,permit_mynetworks,reject_rbl_client zen.spamhaus.org,reject_unlisted_recipient
+    enabled: "{{postfix_disable_graylisting}}"
+
+# Create a noreply@localhost.localdomain alias > /dev/null
+# To use that, create an email alias in your web interface:
+#   noreply@myrealdomain.de -> noreply@localhost.localdomain
+create_noreply_alias: yes
+
+# Create bounces alias, e.g. bounces+someidtoken@yourdomain.com
+# Mails sent to this host are redirected to the given API url for processing
+# in your app
+mail_bouncer_aliases:
+  - name: 'bounces'
+    url: 'https://myservice.com/bounce_api'
+
+# Only for the landing-page (German!)
+mail_http_hostname: '{{ansible_nodename}}'
+mail_http_domain: '{{ansible_domain}}'

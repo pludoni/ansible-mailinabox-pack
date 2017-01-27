@@ -1,0 +1,15 @@
+- name: "Add bounce mappings"
+  lineinfile:
+    dest: /etc/aliases
+    line: '{{item.name}}: |/opt/bounce_script_{{item.name}}.py'
+    regexp: '^{{item.name}}:'
+  notify: run newaliases
+  with_items: "{{mail_bouncer_aliases}}"
+
+
+- template:
+    dest: "/opt/bounce_script_{{item.name}}.py"
+    src: "bounce_script.py"
+    mode: "u+rwx,g=rx,o=rx"
+  with_items: "{{mail_bouncer_aliases}}"
+  name: "Create bounce scripts"

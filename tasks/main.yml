@@ -1,0 +1,80 @@
+- git:
+    repo: "https://github.com/mail-in-a-box/mailinabox.git"
+    dest: "/root/mailinabox"
+    version: "{{mailinabox_ref}}"
+    update: no
+    # force: yes
+  name: Checkout mailinabox.git to /root/mailinabox
+
+- stat:
+    path: /usr/local/bin/mailinabox-daemon
+  register: mailinabox_installed
+  name: "Check if mailinabox is already installed"
+
+- pause:
+    prompt: |
+      Now install mailinabox manually
+      * Login to root@{{ansible_hostname}}
+      cd mailinabox
+      setup/start.sh
+  when: 'mailinabox_installed.stat.exists == false'
+
+- apt: pkg=dovecot-pop3d
+  name: "Dovecot | POP3 | Install dovecot pop3"
+
+- ufw: rule=allow port=995
+  name: "Dovecot | POP3 | Allow POP3s Port"
+
+- blockinfile:
+    dest: '/etc/dovecot/conf.d/10-master.conf'
+    insertafter: 'inet_listener pop3s'
+    block: |
+      port = 995
+      ssl = yes
+  notify: reload dovecot
+  name: "Dovecot | POP3 | Enable POP3s"
+
+- lineinfile:
+    dest: '/etc/dovecot/conf.d/99-local-spampd.conf'
+    regexp: '.*antispam_spam_pattern_ignorecase =.*'
+    line: '    antispam_spam_pattern_ignorecase = SPAM;JUNK;INBOX.Junk-E-Mail'
+  notify: reload dovecot
+  name: "Dovecot | Add Various name synonyms for junk folders"
+
+- lineinfile:
+    dest: /etc/postfix/main.cf
+    line: "{{item.key}}={{item.value}}"
+    regexp: "^{{item.key}}"
+  notify: reload postfix
+  name: "Postfix | Reduce queue lifetime - deliverability not as important as bounce spam"
+  with_items: "{{postfix_queue_lifetime_vars}}"
+
+- lineinfile:
+    dest: /etc/postfix/main.cf
+    line: "{{item.key}}={{item.value}}"
+    regexp: "^{{item.key}}"
+  notify: reload postfix
+  name: "Postfix | Change other parameters"
+  when: item.enabled
+  with_items: "{{postfix_other_vars}}"
+
+- name: "Add noreply alias to /dev/null - To make it work create email alias in your web interface from noreply@somedomain.de -> noreply@localhost.localdomain"
+  lineinfile:
+    dest: /etc/aliases
+    line: 'noreply: /dev/null'
+    regexp: '^noreply:'
+  notify: run newaliases
+  when: create_noreply_alias
+
+- name: "Copy Mail Landing-Page"
+  template:
+    dest: /home/user-data/www/default/index.html
+    src: 'landingpage.html'
+    owner: 'user-data'
+
+
+
+- include: "bounce-catcher.yml"
+  when: "mail_bouncer_aliases is defined and mail_bouncer_aliases"
+
+

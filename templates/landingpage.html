@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <!-- {{ansible_managed }} -->
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>body{margin:1em auto;max-width:40em;padding:0 .62em;font:1.2em/1.62em sans-serif;}h1,h2,h3{line-height:1.2em;}@media print{body{max-width:none}}</style>
+  </head>
+  <body>
+  <h1>{{mail_http_hostname}}</h1>
+  <table style='width: 100%'>
+    <tr>
+      <td>
+        <h2>
+          <a href="https://{{mail_http_hostname}}/mail">Webmail</a>
+        </h2>
+      </td>
+      <td>
+
+        <h2>
+          <a href="https://{{mail_http_hostname}}/admin">Admin</a>
+        </h2>
+      </td>
+    </tr>
+  </table>
+  <h3>Einstellungen SMTP/IMAP</h3>
+  <p>Hostname: {{mail_http_hostname}}</p>
+  <p>IMAP Port: 993, Verschlüsselung SSL</p>
+  <p>POP3 Port: 995, Verschlüsselung SSL</p>
+  <p>Postausgang SMTP: Port 587 STARTTLS <br/>(Outlook Nutzer nicht vergessen: Postausgangsserver erfordert Authentifizierung)</p>
+  <p>Nutzername: "vorname.nachname@{{mail_http_domain}}"</p>
+</body>
+</html>

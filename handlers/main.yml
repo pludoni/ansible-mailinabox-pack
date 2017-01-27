@@ -1,0 +1,9 @@
+---
+- name: reload dovecot
+  service: name=dovecot state=reloaded
+
+- name: reload postfix
+  service: name=postfix state=reloaded
+
+- name: run newaliases
+  command: newaliases
