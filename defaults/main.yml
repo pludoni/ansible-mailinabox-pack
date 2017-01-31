@@ -15,7 +15,7 @@ postfix_queue_lifetime_vars:
 
 
 # Define further local domains if necessary
-postfix_local_domain: "{{ansible_domain}}"
+# postfix_local_domain: "{{ansible_domain}}"
 
 # Disable Graylisting -
 postfix_disable_graylisting: yes
@@ -26,7 +26,7 @@ postfix_allow_all_users_to_send_as_any: yes
 # Also enable delivery to localdomain for bouncer +noreply aliases
 postfix_other_vars:
   - key: mydestination
-    value: "localhost, localhost.localdomain, localdomain, {{postfix_local_domain}}"
+    value: "localhost, localhost.localdomain, localdomain"
     enabled: yes
   - key: smtpd_sender_restrictions
     value: reject_non_fqdn_sender,reject_unknown_sender_domain,reject_rhsbl_sender dbl.spamhaus.org
