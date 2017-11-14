@@ -41,6 +41,11 @@
   notify: reload dovecot
   name: "Dovecot | Add Various name synonyms for junk folders"
 
+- copy:
+    dest: /etc/postfix/mime_header_checks
+    content: >
+      /name=\"?(.*)\.(bat|com|exe|dll|vbs|msi|reg)\s*([;'\"]|$)/ REJECT
+
 - lineinfile:
     dest: /etc/postfix/main.cf
     line: "{{item.key}}={{item.value}}"
@@ -57,6 +62,7 @@
   name: "Postfix | Change other parameters"
   when: item.enabled
   with_items: "{{postfix_other_vars}}"
+
 
 - name: "Add noreply alias to /dev/null - To make it work create email alias in your web interface from noreply@somedomain.de -> noreply@localhost.localdomain"
   lineinfile:

@@ -34,6 +34,8 @@ postfix_other_vars:
   - key: smtpd_recipient_restrictions
     value: permit_sasl_authenticated,permit_mynetworks,reject_rbl_client zen.spamhaus.org,reject_unlisted_recipient
     enabled: "{{postfix_disable_graylisting}}"
+  - key: mime_header_checks
+    value: "regexp:/etc/postfix/mime_header_checks"
 
 # Create a noreply@localhost.localdomain alias > /dev/null
 # To use that, create an email alias in your web interface:
